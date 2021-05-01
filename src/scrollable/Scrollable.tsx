@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 
 import "../styles/scrollable.sass";
 import { ScrollableProps } from "./types/ScrollableProps";
@@ -7,6 +7,7 @@ import { useScrollBarHeight } from "./hooks/useScrollBarHeight";
 import { useScrollHandler } from "./hooks/useScrollHandler";
 
 export const Scrollable = ({ children, ...props }: ScrollableProps) => {
+  const scrollHostRef = useRef<HTMLDivElement>();
   const { ref: containerRef, height: containerHeight } = useResizeObserver();
   const {
     ref: scrollContentRef,
@@ -20,23 +21,36 @@ export const Scrollable = ({ children, ...props }: ScrollableProps) => {
 
   const {
     onScroll,
+    beginDrag,
+    stopDrag,
     scrollPercentage,
-  } = useScrollHandler<HTMLDivElement>(scrollContentHeight, containerHeight);
+    isDragging,
+  } = useScrollHandler<HTMLDivElement>(
+    scrollContentHeight,
+    containerHeight,
+    scrollHostRef,
+  );
 
   return (
-    <div className="scrollable-container" {...props} ref={containerRef}>
-      <div className="scroll-host" onScroll={onScroll}>
+    <div
+      className="scrollable-container"
+      {...props}
+      onMouseUp={stopDrag}
+      ref={containerRef}
+    >
+      <div className="scroll-host" onScroll={onScroll} ref={scrollHostRef}>
         <div className="scroll-host-content" ref={scrollContentRef}>
           {children}
         </div>
       </div>
       <div className="scroll-bar">
         <div
-          className="scroll-thumb"
+          className={`scroll-thumb${isDragging ? " dragged" : ""}`}
           style={{
             height: `${scrollBarHeight}px`,
             top: `${scrollPercentage * (containerHeight - scrollBarHeight)}px`,
           }}
+          onMouseDown={beginDrag}
           onClick={(e) => {
             e.stopPropagation();
           }}
