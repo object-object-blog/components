@@ -1,1 +1,24 @@
 @use './variables' as var
+
+.scrollable-container
+  position: relative
+  height: 100%
+
+.scroll-host
+  height: 100%
+  overflow-y: auto
+
+.scroll-bar
+  position: absolute
+  top: 0
+  right: 0
+  width: calc(18px + 0.1rem)
+  height: 100%
+  background-color: var.$mercury
+
+  .scroll-thumb
+    position: absolute
+    width: 100%
+    left: 0
+    top: 0
+    background-color: var.$flush-orange
