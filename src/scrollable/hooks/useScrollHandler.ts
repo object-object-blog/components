@@ -21,6 +21,28 @@ export const useScrollHandler = <T extends HTMLElement>(
 
   const beginDrag = useCallback(() => setDraggingThumb(true), []);
 
+  const handleScrollBarClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const scrollBarClickTargetPercentage =
+        e.nativeEvent.offsetY / clientHeight;
+      const offsetDistanceModifier = Math.abs(
+        scrollBarClickTargetPercentage - scrollPercentage,
+      );
+      const offset =
+        (scrollBarClickTargetPercentage > scrollPercentage
+          ? clientHeight
+          : -clientHeight) * offsetDistanceModifier;
+      if (scrollHostRef.current) {
+        scrollHostRef.current.scrollBy({
+          left: 0,
+          top: offset,
+          behavior: "smooth",
+        });
+      }
+    },
+    [scrollPercentage, clientHeight, scrollHeight, scrollHostRef.current],
+  );
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       e.preventDefault();
@@ -47,6 +69,7 @@ export const useScrollHandler = <T extends HTMLElement>(
 
   return {
     onScroll: handleScroll,
+    onScrollBarClick: handleScrollBarClick,
     stopDrag,
     beginDrag,
     scrollPercentage,

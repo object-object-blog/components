@@ -21,6 +21,7 @@ export const Scrollable = ({ children, ...props }: ScrollableProps) => {
 
   const {
     onScroll,
+		onScrollBarClick,
     beginDrag,
     stopDrag,
     scrollPercentage,
@@ -43,7 +44,7 @@ export const Scrollable = ({ children, ...props }: ScrollableProps) => {
           {children}
         </div>
       </div>
-      <div className="scroll-bar">
+      <div className="scroll-bar" onClick={onScrollBarClick}>
         <div
           className={`scroll-thumb${isDragging ? " dragged" : ""}`}
           style={{
